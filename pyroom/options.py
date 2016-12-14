@@ -1,13 +1,9 @@
 from __future__ import absolute_import
 
-import types
-
 from tornado.options import define
 from tornado.options import options
 
-
 DEFAULT_CONFIG_FILE = 'flowerconfig.py'
-
 
 define("RPORT", default=2332,
        help="[Room Server] run on the given port", type=int)
