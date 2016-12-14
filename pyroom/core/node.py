@@ -4,24 +4,28 @@ class XNode(object):
     def __init__(self):
         pass
 
-    def register(self, handler):
+    @classmethod
+    def register(cls, handler):
         raise NotImplementedError
 
-    def unregister(self, handler):
+    @classmethod
+    def unregister(cls, handler):
         raise NotImplementedError
 
 
 class NodeManager(XNode):
-    def register(self, handler):
+    @classmethod
+    def register(cls, handler):
         if handler.node == -1:
             key = "{}-{}".format(handler.ip, handler.port)
-            self.guid_hash_handler[key] = handler
+            cls.guid_hash_handler[key] = handler
         else:
             pass
 
-    def unregister(self, handler):
+    @classmethod
+    def unregister(cls, handler):
         key = "{}-{}".format(handler.ip, handler.port)
-        del self.guid_hash_handler[key]
+        del cls.guid_hash_handler[key]
 
 
 if __name__ == '__main__':

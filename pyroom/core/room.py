@@ -2,8 +2,9 @@ class RoomManager(object):
     def __init__(self):
         pass
 
-    def check_in(self, uid):
+    @classmethod
+    def check_in(cls, uid):
         pass
 
-    def check_out(self, uid):
+    def check_out(cls, uid):
         pass
