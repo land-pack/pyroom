@@ -4,6 +4,7 @@ import os
 
 from tornado.web import StaticFileHandler
 
+from pyroom.views import api
 from pyroom.views import websocket
 from pyroom.views import monitor
 from pyroom.views.error import NotFoundErrorHandler
@@ -14,6 +15,9 @@ settings = dict(
 )
 
 handlers = [
+    # Http api
+    (r'/api/join', api.JoinHandler),
+
     # Events WebSocket API
     (r"/api/ws", websocket.BrokerServerHandler),
 
