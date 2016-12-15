@@ -11,7 +11,7 @@ class DispatchResponse(object):
 class BrokerServerDispatch(DispatchResponse):
     def check_in(self, body):
         uid = body.get("uid")
-        if RoomManager.is_timeout(uid):
+        if RoomManager.is_expire(uid):
             self.write(100, 1001, {})
         else:
             RoomManager.check_in(uid)
