@@ -11,22 +11,50 @@ class BaseRoomManager(object):
 
     @classmethod
     def book(cls, uid):
+        """
+        Check if there are some empty room available at first,
+        if no open new room!
+        :param uid:
+        :return:
+        """
         raise NotImplementedError
 
     @classmethod
     def cancel(cls, uid):
+        """
+        Call cancel if current node are unavailable!
+        :param uid:
+        :return:
+        """
         raise NotImplementedError
 
     @classmethod
     def check_in(cls, uid):
+        """
+        Confirm user has checking, agree only if the user has not expire!
+        and then delete element from uid_hash_ttl_flag!
+        :param uid:
+        :return:
+        """
         raise NotImplementedError
 
     @classmethod
     def check_out(cls, uid):
+        """
+        if user has no operate anything kick it off, or maybe they leave self!
+        :param uid:
+        :return:
+        """
         raise NotImplementedError
 
     @classmethod
     def is_expire(cls, uid, max_time=5):
+        """
+        If user haven't check in during a given time, will release this room!
+        :param uid:
+        :param max_time:
+        :return:
+        """
         latest = cls.uid_hash_ttl.get(uid, None)
         if not latest:
             return True
@@ -37,11 +65,21 @@ class BaseRoomManager(object):
 
     @classmethod
     def set_ttl(cls, uid):
+        """
+        if user book room success, will clock the timer and set flag!
+        :param uid:
+        :return:
+        """
         cls.uid_hash_ttl[uid] = time.time()
         cls.uid_hash_ttl_flag[uid] = True
 
     @classmethod
     def update_ttl_flag(cls, uid):
+        """
+        Check if the current uid whether expire! if expire set flag to False
+        :param uid:
+        :return:
+        """
         if cls.is_expire(uid):
             cls.uid_hash_ttl_flag[uid] = False
             return True
