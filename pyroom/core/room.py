@@ -14,6 +14,10 @@ class BaseRoomManager(object):
         raise NotImplementedError
 
     @classmethod
+    def cancel(cls, uid):
+        raise NotImplementedError
+
+    @classmethod
     def check_in(cls, uid):
         raise NotImplementedError
 
@@ -68,8 +72,17 @@ class RoomManager(BaseRoomManager):
         print 'book a room for', uid
 
     @classmethod
-    def check_in(cls, uid):
+    def cancel(cls, uid):
         pass
+
+    @classmethod
+    def check_in(cls, uid):
+        if cls.update_ttl_flag(uid):
+            # TODO verify ok
+            pass
+        else:
+            # forbidden
+            pass
 
     @classmethod
     def check_out(cls, uid):
