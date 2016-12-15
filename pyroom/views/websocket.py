@@ -7,8 +7,6 @@ from pyroom.events.broker import BrokerServerDispatch
 from pyroom.core.node import NodeManager
 
 logger = logging.getLogger(__name__)
-
-clients = []
 broker_server_dispatch = BrokerServerDispatch()
 
 
@@ -17,7 +15,8 @@ class BrokerServerHandler(websocket.WebSocketHandler):
         return True
 
     def open(self):
-        clients.append(self)
+        setattr(self, 'ip', self.get_argument("ip"))
+        setattr(self, 'port', self.get_argument("port"))
         NodeManager.register(self)
 
     def on_message(self, message):
@@ -38,4 +37,3 @@ class BrokerServerHandler(websocket.WebSocketHandler):
 
     def on_close(self):
         NodeManager.unregister(self)
-        clients.remove(self)
