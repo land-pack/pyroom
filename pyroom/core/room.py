@@ -6,5 +6,10 @@ class RoomManager(object):
     def check_in(cls, uid):
         pass
 
+    @classmethod
     def check_out(cls, uid):
+        pass
+
+    @classmethod
+    def is_timeout(cls, uid):
         pass

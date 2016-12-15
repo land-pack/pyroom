@@ -25,7 +25,8 @@ class NodeManager(XNode):
     @classmethod
     def unregister(cls, handler):
         key = "{}-{}".format(handler.ip, handler.port)
-        del cls.guid_hash_handler[key]
+        if key in cls.guid_hash_handler:
+            del cls.guid_hash_handler[key]
 
 
 if __name__ == '__main__':

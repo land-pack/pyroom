@@ -15,8 +15,13 @@ class BrokerServerHandler(websocket.WebSocketHandler):
         return True
 
     def open(self):
+        """
+        ws://127.0.0.1:2332/api/ws?ip=192.168.1.11&port=9001
+        :return:
+        """
         setattr(self, 'ip', self.get_argument("ip"))
         setattr(self, 'port', self.get_argument("port"))
+        setattr(self, 'node', self.get_argument("node"))
         NodeManager.register(self)
 
     def on_message(self, message):
