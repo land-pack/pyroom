@@ -3,13 +3,12 @@ from __future__ import absolute_import
 import logging
 
 from functools import partial
-from concurrent.futures import ThreadPoolExecutor
-
 import tornado.web
+from concurrent.futures import ThreadPoolExecutor
+from pyroom.core.room import RoomManager
 
 from tornado import ioloop
 from tornado.httpserver import HTTPServer
-
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +33,7 @@ class PyRoom(tornado.web.Application):
             server = HTTPServer(self)
             socket = bind_unix_socket(self.options.unix_socket)
             server.add_socket(socket)
-
+        ioloop.PeriodicCallback(RoomManager.loop_check_ttl, 1000).start()
         self.started = True
         self.io_loop.start()
 

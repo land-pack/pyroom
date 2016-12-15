@@ -30,7 +30,7 @@ class BaseRoomManager(object):
         latest = cls.uid_hash_ttl.get(uid, None)
         if not latest:
             return True
-        if latest > max_time:
+        if time.time() - latest > max_time:
             return True
         else:
             return False
@@ -69,6 +69,7 @@ class BaseRoomManager(object):
 class RoomManager(BaseRoomManager):
     @classmethod
     def book(cls, uid):
+        cls.set_ttl(uid)
         print 'book a room for', uid
 
     @classmethod
