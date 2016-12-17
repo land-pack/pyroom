@@ -1,5 +1,4 @@
 import time
-from tornado import ioloop
 
 
 class BaseRoomManager(object):
@@ -44,6 +43,8 @@ class BaseRoomManager(object):
         """
         raise NotImplementedError
 
+
+class RoomManagerHelper(object):
     @classmethod
     def is_expire(cls, uid, max_time=5):
         """
@@ -101,7 +102,7 @@ class BaseRoomManager(object):
             del cls.uid_hash_ttl[uid]
 
 
-class RoomManager(BaseRoomManager):
+class RoomManager(BaseRoomManager, RoomManagerHelper):
     room_to_uid_set = {}
     uid_to_room = {}
     room_lack_level = {}
@@ -154,7 +155,6 @@ class RoomManager(BaseRoomManager):
 
     @classmethod
     def cancel(cls, uid):
-        size = cls.room_size
         room_name = cls.uid_to_room[uid]
         lack_level = cls.room_lack_level.get(room_name, None)
         if lack_level is not None:
