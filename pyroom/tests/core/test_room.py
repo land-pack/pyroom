@@ -12,12 +12,20 @@ class RoomTest(unittest.TestCase):
         room_name = self.manager.book('123')
         self.assertEqual(room_name, 'room_0')
         self.assertEqual(self.manager.uid_to_room, {'123': 'room_0'})
-        room_name = self.manager.book('456')
+        self.manager.book('456')
         self.assertEqual(self.manager.uid_to_room, {'123': 'room_0', '456': 'room_0'})
+        self.manager.book('789')
+        self.assertEqual(self.manager.uid_to_room, {'123': 'room_0', '456': 'room_0', '789': 'room_0'})
 
     def test_cancel(self):
+        # self.assertEqual(self.manager.uid_to_room, {'123': 'room_0', '456': 'room_0', '789': 'room_0'})
         self.manager.cancel('123')
-        self.assertEqual(self.manager.uid_to_room, {'456': 'room_0'})
+        self.assertEqual(self.manager.uid_to_room, {'456': 'room_0', '789': 'room_0'})
+
+    # def test_book_again(self):
+    #     self.assertEqual(self.manager.uid_to_room, {'456': 'room_0', '789': 'room_0'})
+        self.manager.book('111')
+        self.assertEqual(self.manager.uid_to_room, {'111': 'room_0', '456': 'room_0', '789': 'room_0'})
 
 
 if __name__ == '__main__':

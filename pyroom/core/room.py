@@ -6,9 +6,6 @@ class BaseRoomManager(object):
     uid_hash_ttl = {}
     uid_hash_ttl_flag = {}
 
-    def __init__(self):
-        pass
-
     @classmethod
     def book(cls, uid):
         """
@@ -108,18 +105,9 @@ class RoomManager(BaseRoomManager):
     room_to_uid_set = {}
     uid_to_room = {}
     room_lack_level = {}
-    room_size = 9
+    room_size = 3
     lack_level_set = {key: set() for key in range(1, room_size + 1)}
     room_name_index = 0
-
-    @classmethod
-    def init(cls):
-        cls.init_lack_level_set(size=9)
-
-    @classmethod
-    def init_lack_level_set(cls, size=9):
-        for i in range(1, size + 1):
-            cls.lack_level_set[i] = set()
 
     @classmethod
     def gen_room_name(cls, prefix='room_'):
@@ -128,11 +116,8 @@ class RoomManager(BaseRoomManager):
         return room_name
 
     @classmethod
-    def is_not_full(cls):
-        pass
-
-    @classmethod
-    def new_room(cls, uid, size=9):
+    def new_room(cls, uid):
+        size = cls.room_size
         room_name = cls.gen_room_name()
         cls.room_to_uid_set[room_name] = set()
         cls.room_to_uid_set[room_name].add(uid)
@@ -141,7 +126,8 @@ class RoomManager(BaseRoomManager):
         return room_name
 
     @classmethod
-    def old_room(cls, uid, size=9):
+    def old_room(cls, uid):
+        size = cls.room_size
         for r in range(1, size + 1):
             set_length = len(cls.lack_level_set[r])
             if set_length > 0:
@@ -168,13 +154,19 @@ class RoomManager(BaseRoomManager):
 
     @classmethod
     def cancel(cls, uid):
+        size = cls.room_size
         room_name = cls.uid_to_room[uid]
-        lack_level = cls.room_lack_level[room_name]
+        lack_level = cls.room_lack_level.get(room_name, None)
+        if lack_level is not None:
+            cls.lack_level_set[lack_level].remove(room_name)
+            cls.lack_level_set[lack_level + 1].add(room_name)
+            cls.room_lack_level[room_name] = lack_level + 1
+        else:
+            cls.lack_level_set[size - 1].add(room_name)
+            cls.room_lack_level[room_name] = size - 1
         cls.room_to_uid_set[room_name].remove(uid)
-        cls.lack_level_set[lack_level].remove(room_name)
-        cls.lack_level_set[lack_level + 1].add(room_name)
-        cls.room_lack_level[room_name] = lack_level + 1
         del cls.uid_to_room[uid]
+        return cls
 
     @classmethod
     def check_in(cls, uid):
@@ -188,12 +180,3 @@ class RoomManager(BaseRoomManager):
     @classmethod
     def check_out(cls, uid):
         pass
-
-
-if __name__ == '__main__':
-    RoomManager.book('123')
-    RoomManager.set_ttl('123')
-    RoomManager.loop_check_ttl()
-    print RoomManager.uid_hash_ttl_flag
-    # time.sleep(5)
-    # print RoomManager.uid_hash_ttl_flag
