@@ -4,6 +4,12 @@ import time
 class BaseRoomManager(object):
     uid_hash_ttl = {}
     uid_hash_ttl_flag = {}
+    room_to_uid_set = {}
+    uid_to_room = {}
+    room_lack_level = {}
+    room_size = 3
+    lack_level_set = {key: set() for key in range(1, room_size + 1)}
+    room_name_index = 0
 
     @classmethod
     def book(cls, uid):
@@ -43,8 +49,6 @@ class BaseRoomManager(object):
         """
         raise NotImplementedError
 
-
-class RoomManagerHelper(object):
     @classmethod
     def is_expire(cls, uid, max_time=5):
         """
@@ -102,14 +106,7 @@ class RoomManagerHelper(object):
             del cls.uid_hash_ttl[uid]
 
 
-class RoomManager(BaseRoomManager, RoomManagerHelper):
-    room_to_uid_set = {}
-    uid_to_room = {}
-    room_lack_level = {}
-    room_size = 3
-    lack_level_set = {key: set() for key in range(1, room_size + 1)}
-    room_name_index = 0
-
+class RoomManager(BaseRoomManager):
     @classmethod
     def gen_room_name(cls, prefix='room_'):
         room_name = prefix + str(cls.room_name_index)
