@@ -108,8 +108,13 @@ class RoomManager(BaseRoomManager):
     room_to_uid_set = {}
     uid_to_room = {}
     room_lack_level = {}
-    lack_level_set = {}
+    room_size = 9
+    lack_level_set = {key: set() for key in range(1, room_size + 1)}
     room_name_index = 0
+
+    @classmethod
+    def init(cls):
+        cls.init_lack_level_set(size=9)
 
     @classmethod
     def init_lack_level_set(cls, size=9):
@@ -169,6 +174,7 @@ class RoomManager(BaseRoomManager):
         cls.lack_level_set[lack_level].remove(room_name)
         cls.lack_level_set[lack_level + 1].add(room_name)
         cls.room_lack_level[room_name] = lack_level + 1
+        del cls.uid_to_room[uid]
 
     @classmethod
     def check_in(cls, uid):
