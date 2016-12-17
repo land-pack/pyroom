@@ -162,8 +162,8 @@ class RoomManager(BaseRoomManager):
             cls.lack_level_set[lack_level + 1].add(room_name)
             cls.room_lack_level[room_name] = lack_level + 1
         else:
-            cls.lack_level_set[size - 1].add(room_name)
-            cls.room_lack_level[room_name] = size - 1
+            cls.lack_level_set[1].add(room_name)
+            cls.room_lack_level[room_name] = 1
         cls.room_to_uid_set[room_name].remove(uid)
         del cls.uid_to_room[uid]
         return cls
