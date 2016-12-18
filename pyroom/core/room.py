@@ -97,7 +97,6 @@ class BaseRoomManager(object):
 
         changed_list = []
         for uid in cls.uid_hash_ttl:
-            r = requests.get('http://127.0.0.1:5000?uid=%s' % uid)
             is_expired = cls.is_expire(uid=uid)
             if is_expired:
                 changed_list.append(uid)
