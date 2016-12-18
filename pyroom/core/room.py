@@ -72,7 +72,6 @@ class BaseRoomManager(object):
         :return:
         """
         cls.uid_hash_ttl[uid] = time.time()
-        cls.uid_hash_ttl_flag[uid] = True
 
     # @classmethod
     # def update_ttl_flag(cls, uid):
@@ -171,6 +170,7 @@ class RoomManager(BaseRoomManager):
     def check_in(cls, uid):
         if cls.uid_hash_ttl.get(uid, None):
             # agree check in
+            del cls.uid_hash_ttl[uid]
             return True
         else:
             # forbidden check in

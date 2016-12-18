@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import ujson
 from ..views import BaseHandler
 from pyroom.core.room import RoomManager
 
@@ -7,11 +8,13 @@ from pyroom.core.room import RoomManager
 class JoinHandler(BaseHandler):
     def get(self):
         uid = self.get_argument("uid")
-        ret = RoomManager.book(uid)
-        if ret:
-            self.write('ok')
+        room_name = RoomManager.book(uid)
+        if room_name:
+            response = {'room': room_name, 'status': '100'}
+            self.write(ujson.dumps(response))
         else:
-            self.write("bad")
+            response = {'status': '101'}
+            self.write(ujson.dumps(response))
 
 
 class CheckInHandler(BaseHandler):
