@@ -23,6 +23,7 @@ class PyRoom(tornado.web.Application):
         self.options = options
         self.io_loop = io_loop or ioloop.IOLoop.instance()
         self.started = False
+        self.debug=True
 
     def start(self):
         self.pool = self.pool_executor_cls(max_workers=self.max_workers)

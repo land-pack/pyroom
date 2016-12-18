@@ -17,6 +17,7 @@ settings = dict(
 handlers = [
     # Http api
     (r'/api/join', api.JoinHandler),
+    (r'/api/checkin', api.CheckInHandler),
 
     # Events WebSocket API
     (r"/api/ws", websocket.BrokerServerHandler),

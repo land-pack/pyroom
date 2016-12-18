@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import unittest
+import time
 from pyroom.core.room import RoomManager
 
 
@@ -46,6 +47,15 @@ class RoomTest(unittest.TestCase):
         self.assertEqual(self.manager.uid_to_room,
                          {'222': 'room_0', '456': 'room_0', '789': 'room_0', '112': 'room_1', '113': 'room_1',
                           '114': 'room_1', '115': 'room_2', '116': 'room_2', '117': 'room_2', '118': 'room_3'})
+
+    def test_6_check_in(self):
+        flag = self.manager.check_in('222')
+        self.assertEqual(flag, True)
+        flag = self.manager.check_in('222')
+        self.assertEqual(flag, True)
+    #     time.sleep(6)
+    #     flag = self.manager.check_in('456')
+    #     self.assertEqual(flag, False)
 
 
 if __name__ == '__main__':

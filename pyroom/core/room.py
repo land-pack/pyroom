@@ -1,4 +1,5 @@
 import time
+import requests
 
 
 class BaseRoomManager(object):
@@ -57,9 +58,7 @@ class BaseRoomManager(object):
         :param max_time:
         :return:
         """
-        latest = cls.uid_hash_ttl.get(uid, None)
-        if not latest:
-            return True
+        latest = cls.uid_hash_ttl.get(uid)
         if time.time() - latest > max_time:
             return True
         else:
@@ -75,17 +74,17 @@ class BaseRoomManager(object):
         cls.uid_hash_ttl[uid] = time.time()
         cls.uid_hash_ttl_flag[uid] = True
 
-    @classmethod
-    def update_ttl_flag(cls, uid):
-        """
-        Check if the current uid whether expire! if expire set flag to False
-        :param uid:
-        :return:
-        """
-        if cls.is_expire(uid):
-            cls.uid_hash_ttl_flag[uid] = False
-            return True
-        return False
+    # @classmethod
+    # def update_ttl_flag(cls, uid):
+    #     """
+    #     Check if the current uid whether expire! if expire set flag to False
+    #     :param uid:
+    #     :return:
+    #     """
+    #     if cls.is_expire(uid):
+    #         cls.uid_hash_ttl_flag[uid] = False
+    #         return True
+    #     return False
 
     @classmethod
     def loop_check_ttl(cls):
@@ -96,11 +95,14 @@ class BaseRoomManager(object):
         ioloop.PeriodicCallback(checker, 1000).start()
         :return:
         """
+
         changed_list = []
         for uid in cls.uid_hash_ttl:
-            changed = cls.update_ttl_flag(uid)
-            if changed:
+            r = requests.get('http://127.0.0.1:5000?uid=%s' % uid)
+            is_expired = cls.is_expire(uid=uid)
+            if is_expired:
                 changed_list.append(uid)
+                cls.cancel(uid=uid)
 
         for uid in changed_list:
             del cls.uid_hash_ttl[uid]
@@ -167,13 +169,13 @@ class RoomManager(BaseRoomManager):
 
     @classmethod
     def check_in(cls, uid):
-        if cls.update_ttl_flag(uid):
-            # TODO verify ok
-            pass
+        if cls.uid_hash_ttl.get(uid, None):
+            # agree check in
+            return True
         else:
-            # forbidden
-            pass
+            # forbidden check in
+            return False
 
     @classmethod
     def check_out(cls, uid):
-        pass
+        cls.cancel(uid=uid)
