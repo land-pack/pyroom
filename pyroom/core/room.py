@@ -73,18 +73,6 @@ class BaseRoomManager(object):
         """
         cls.uid_hash_ttl[uid] = time.time()
 
-    # @classmethod
-    # def update_ttl_flag(cls, uid):
-    #     """
-    #     Check if the current uid whether expire! if expire set flag to False
-    #     :param uid:
-    #     :return:
-    #     """
-    #     if cls.is_expire(uid):
-    #         cls.uid_hash_ttl_flag[uid] = False
-    #         return True
-    #     return False
-
     @classmethod
     def loop_check_ttl(cls):
         """

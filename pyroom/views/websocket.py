@@ -16,7 +16,7 @@ class BrokerServerHandler(websocket.WebSocketHandler):
 
     def open(self):
         """
-        ws://127.0.0.1:2332/api/ws?ip=192.168.1.11&port=9001
+        ws://127.0.0.1:2332/api/ws?ip=192.168.1.11&port=9001&node=-1
         :return:
         """
         setattr(self, 'ip', self.get_argument("ip"))

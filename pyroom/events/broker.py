@@ -11,11 +11,11 @@ class DispatchResponse(object):
 class BrokerServerDispatch(DispatchResponse):
     def check_in(self, body):
         uid = body.get("uid")
-        if RoomManager.is_expire(uid):
-            self.write(100, 1001, {})
+        if RoomManager.check_in(uid):
+            self.write(100, 1000, {'info': 'check in success'})
         else:
             RoomManager.check_in(uid)
-            self.write(100, 1000, {})
+            self.write(100, 1001, {'info': 'check in failure'})
 
     def check_out(self, body):
         uid = body.get("uid")
