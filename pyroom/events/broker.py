@@ -4,6 +4,12 @@ from pyroom.core.room import RoomManager
 
 class DispatchResponse(object):
     def write(self, status, mid, body):
+        """
+        :param status: request status code (100 ok)
+        :param mid: request message id
+        :param body: request body
+        :return: write to `response` property!
+        """
         response = {"status": str(status), "mid": str(mid), "body": body}
         self.response = ujson.dumps(response)
 

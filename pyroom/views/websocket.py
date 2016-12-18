@@ -22,7 +22,8 @@ class BrokerServerHandler(websocket.WebSocketHandler):
         setattr(self, 'ip', self.get_argument("ip"))
         setattr(self, 'port', self.get_argument("port"))
         setattr(self, 'node', self.get_argument("node"))
-        NodeManager.register(self)
+        ni = NodeManager.register(self)
+        self.write_message(ujson.dumps({'method': 'connect', 'node': ni.node}))
 
     def on_message(self, message):
         """
@@ -33,11 +34,14 @@ class BrokerServerHandler(websocket.WebSocketHandler):
         }
         :return: write thing back
         """
-        data = ujson.loads(message)
-        method = data.get("method")
-        body = data.get("body")
-        getattr(broker_server_dispatch, method, getattr(broker_server_dispatch, "default"))(body)
-        response = broker_server_dispatch.response
+        try:
+            data = ujson.loads(message)
+            method = data.get("method")
+            body = data.get("body")
+            getattr(broker_server_dispatch, method, getattr(broker_server_dispatch, "default"))(body)
+            response = broker_server_dispatch.response
+        except TypeError:
+            response = 'p'
         self.write_message(response)
 
     def on_close(self):
