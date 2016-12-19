@@ -18,6 +18,7 @@ handlers = [
     # Http api
     (r'/api/join', api.JoinHandler),
     (r'/api/checkin', api.CheckInHandler),
+    (r'/api/checkout', api.CheckOutHandler),
 
     # Events WebSocket API
     (r"/api/ws", websocket.BrokerServerHandler),

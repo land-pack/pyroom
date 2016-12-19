@@ -60,6 +60,12 @@ class TestRoomByApi(unittest.TestCase):
                            'port': '9001'}
         self.assertEqual(response, assume_response)
 
+    def test_6_check_out(self):
+        uid = '222'
+        r = requests.get('http://127.0.0.1:2332/api/checkout?uid=%s' % uid)
+        content = r.content
+        self.assertEqual(content, 'check_out_ok')
+
 
 if __name__ == '__main__':
     unittest.main()

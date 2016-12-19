@@ -4,7 +4,6 @@ import requests
 
 class BaseRoomManager(object):
     uid_hash_ttl = {}
-    uid_hash_ttl_flag = {}
     room_to_uid_set = {}
     uid_to_room = {}
     room_lack_level = {}
