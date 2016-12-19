@@ -140,18 +140,21 @@ class RoomManager(BaseRoomManager):
 
     @classmethod
     def cancel(cls, uid):
-        room_name = cls.uid_to_room[uid]
-        lack_level = cls.room_lack_level.get(room_name, None)
-        if lack_level is not None:
-            cls.lack_level_set[lack_level].remove(room_name)
-            cls.lack_level_set[lack_level + 1].add(room_name)
-            cls.room_lack_level[room_name] = lack_level + 1
-        else:
-            cls.lack_level_set[1].add(room_name)
-            cls.room_lack_level[room_name] = 1
-        cls.room_to_uid_set[room_name].remove(uid)
-        del cls.uid_to_room[uid]
-        return cls
+        try:
+            room_name = cls.uid_to_room[uid]
+            lack_level = cls.room_lack_level.get(room_name, None)
+            if lack_level is not None:
+                cls.lack_level_set[lack_level].remove(room_name)
+                cls.lack_level_set[lack_level + 1].add(room_name)
+                cls.room_lack_level[room_name] = lack_level + 1
+            else:
+                cls.lack_level_set[1].add(room_name)
+                cls.room_lack_level[room_name] = 1
+            cls.room_to_uid_set[room_name].remove(uid)
+            del cls.uid_to_room[uid]
+            return True
+        except KeyError:
+            return False
 
     @classmethod
     def check_in(cls, uid):
@@ -165,4 +168,8 @@ class RoomManager(BaseRoomManager):
 
     @classmethod
     def check_out(cls, uid):
-        cls.cancel(uid=uid)
+        try:
+            cls.cancel(uid=uid)
+            return True
+        except KeyError:
+            return False

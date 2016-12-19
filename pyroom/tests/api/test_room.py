@@ -3,18 +3,19 @@ from __future__ import absolute_import
 import unittest
 import requests
 import time
+import socket
 import ujson
 
 
 class TestRoomByApi(unittest.TestCase):
     def setUp(self):
-        pass
+        self.ip = socket.gethostbyname(socket.gethostname())
 
     def test_1_book(self):
         uid = '111'
         r = requests.get('http://127.0.0.1:2332/api/join?uid=%s' % uid)
         response = ujson.loads(r.content)
-        assume_response = {'room': 'room_0', 'status': '100', 'node': 'node_0', 'ip': '192.168.0.101',
+        assume_response = {'room': 'room_0', 'status': '100', 'node': 'node_0', 'ip': str(self.ip),
                            'port': '9001'}
         self.assertEqual(response, assume_response)
 
@@ -36,7 +37,7 @@ class TestRoomByApi(unittest.TestCase):
         uid = '444'
         r = requests.get('http://127.0.0.1:2332/api/join?uid=%s' % uid)
         response = ujson.loads(r.content)
-        assume_response = {'room': 'room_1', 'status': '100', 'node': 'node_0', 'ip': '192.168.0.101',
+        assume_response = {'room': 'room_1', 'status': '100', 'node': 'node_0', 'ip': str(self.ip),
                            'port': '9001'}
         self.assertEqual(response, assume_response)
 
@@ -55,7 +56,7 @@ class TestRoomByApi(unittest.TestCase):
         uid = '555'
         r = requests.get('http://127.0.0.1:2332/api/join?uid=%s' % uid)
         response = ujson.loads(r.content)
-        assume_response = {'room': 'room_0', 'status': '100', 'node': 'node_0', 'ip': '192.168.0.101',
+        assume_response = {'room': 'room_0', 'status': '100', 'node': 'node_0', 'ip': str(self.ip),
                            'port': '9001'}
         self.assertEqual(response, assume_response)
 

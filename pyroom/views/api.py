@@ -38,3 +38,13 @@ class CheckInHandler(BaseHandler):
             self.write('check_in_ok')
         else:
             self.write("check_in_bad")
+
+
+class CheckOutHandler(BaseHandler):
+    def get(self):
+        uid = self.get_argument("uid")
+        ret = RoomManager.check_out(uid)
+        if ret:
+            self.write("check_out_ok")
+        else:
+            self.write("check_out_bad")
