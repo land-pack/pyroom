@@ -1,5 +1,4 @@
 import time
-import requests
 
 
 class BaseRoomManager(object):
