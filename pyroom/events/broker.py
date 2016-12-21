@@ -25,8 +25,10 @@ class BrokerServerDispatch(DispatchResponse):
 
     def check_out(self, body):
         uid = body.get("uid")
-        RoomManager.check_out(uid)
-        self.write(100, 1002, {})
+        if RoomManager.check_out(uid):
+            self.write(100, 1002, {})
+        else:
+            self.write(100, 1003, {})
 
     def ping(self, body):
         pass
