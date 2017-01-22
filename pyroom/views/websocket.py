@@ -16,15 +16,19 @@ class BrokerServerHandler(websocket.WebSocketHandler):
 
     def open(self):
         """
-        ws://127.0.0.1:2332/api/ws?node=-1
-        :return:
+        ws://127.0.0.1:2332/api/ws?port=9001&node=-1
         """
-        ip, port = self.request.host.split(":")
-        setattr(self, 'ip', ip)
-        setattr(self, 'port', port)
+        logger.debug("New node register:\t\tip=%s\tport=%s", ip, port)
+        setattr(self, 'host', self.request.remote_ip)
+        setattr(self, 'port', self.get_argument("port"))
         setattr(self, 'node', self.get_argument("node"))
-        ni = NodeManager.register(self)
-        self.write_message(ujson.dumps({'method': 'connect', 'node': ni.node}))
+        try:
+            response = NodeManager.register(self)
+        except Exception as ex:
+            logger.error(traceback.format_exc())
+            raise
+        else:
+            self.write_message(response)
 
     def on_message(self, message):
         """

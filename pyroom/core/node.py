@@ -1,99 +1,68 @@
-class NodeInformation(object):
-    """
-    All property will be domain load to this object!
-    @property ip ('127.0.0.1')
-    @property port (9001)
-    @property node (2)
-    @property handler (websocket handler instance)
-    @property mac ('127.0.0.1-9001'
-    Usage:
-        ni = NodeInformation()
-        ni.ip = '127.0.0.1'
-        ni.port = 9001
-        ni.node = 2
-        ni.handler = handler
-    """
+import uuid
+import ujson
 
-    def __init__(self, ip, port, node, handler, mac, rooms=0):
-        self.ip = ip
-        self.port = port
-        self.node = node
-        self.handler = handler
-        self.mac = mac
+
+class NodeInformation(object):
+
+    def __init__(self, handler, rooms=0):
+        self.ip = handler.ip
+        self.port = handler.port
+        self.node_id = "{}-{}".format(self.ip, self.port)
         self.rooms = rooms
         self.room_set = set()
+        self.origin_node_id = handler.node
+        setattr(handler, 'node', self.node_id)
+        setattr(handler, 'ni', self)
 
+class NodeManager(dict):
+    nodeid_hash_nodeinfo = {}
+    max_rooms = 50
 
-class XNode(object):
-    guid_hash_handler = {}
-    room_to_node = {}
-    node_map = {}
-    node_index = 0
-    max_rooms = 12
-
-    def __init__(self):
-        pass
-
-    @classmethod
-    def register(cls, handler):
-        raise NotImplementedError
-
-    @classmethod
-    def unregister(cls, handler):
-        raise NotImplementedError
-
-    @classmethod
-    def get_node(cls, prefix='node_'):
-        node_name = prefix + str(cls.node_index)
-        cls.node_index += 1
-        return node_name
-
-    @classmethod
-    def landing(cls, room):
-        """
-        Checking, if room already install on someone node, just return that node!
-        else checking, the lack level hash, get node which almost fill full one!
-        :param room:
-        :return:
-        """
-        raise NotImplementedError
-
-
-class NodeManager(XNode):
-    @classmethod
-    def register(cls, handler):
-        if int(handler.node) == -1:
-            mac = "{}-{}".format(handler.ip, handler.port)
-            node = cls.get_node()
-            ni = NodeInformation(ip=handler.ip, port=handler.port, node=node, handler=handler, mac=mac)
-            cls.guid_hash_handler[mac] = ni
-            cls.node_map[node] = ni
-            return ni
+    def register(self, handler): 
+        node_info = NodeInformation(handler)
+        self.__setitem__(node_info.node_id, node_info)
+        if node_info.origin_node_id == "-1":      
+            return ujson.dumps({'method': 'connect', 'node': node_info.node_id})
         else:
-            # TODO recovery mode
-            pass
+            return ujson.dumps({'method': 'recovery'})
 
-    @classmethod
-    def unregister(cls, handler):
-        mac = "{}-{}".format(handler.ip, handler.port)
-        if mac in cls.guid_hash_handler:
-            ni = cls.guid_hash_handler[mac]
-            del cls.guid_hash_handler[mac]
-            node = ni.node
-            del cls.node_map[node]
+    def unregister(self, handler):
+        release_rooms = handler.ni.room_set
+        self.__delitem__(handler.ni.node_id)
+        return release_rooms
 
-    @classmethod
-    def landing(cls, room):
-        for node in cls.node_map:
-            if cls.node_map[node].rooms < cls.max_rooms:
-                if room in cls.node_map[node].room_set:
-                    return cls.node_map[node]
-                else:
-                    cls.node_map[node].room_set.add(room)
-                    cls.node_map[node].rooms += 1
-                    return cls.node_map[node]
-        raise ValueError("No more node available!")
+    def gen_room_name(self):
+        for node_id, node_info in self.iteritems():
+            if node_info.rooms < self.max_rooms:
+                node_info.rooms += 1
+                room_name = '{}-{}'.format(node_info.node_id,uuid.uuid1())
+                node_info.room_set.add(room_name)
+                return room_name
+        return None
+
+
+class Handler(object):
+    pass
 
 
 if __name__ == '__main__':
-    nm = NodeManager()
+    handler = Handler()
+    setattr(handler, 'ip', '127.0.0.1')
+    setattr(handler, 'port', '1999')
+    setattr(handler, 'node', '-1')
+
+    handler2 = Handler()
+    setattr(handler2, 'ip', '127.0.0.2')
+    setattr(handler2, 'port', '1992')
+    setattr(handler2, 'node', '-1')
+    manager = NodeManager()
+    assert manager.register(handler) == ujson.dumps({"node":"127.0.0.1-1999","method":"connect"})
+    assert manager.register(handler) == ujson.dumps({"method":"recovery"})
+    manager.register(handler2)
+    print manager.gen_room_name()
+    print manager.gen_room_name()
+    print manager.gen_room_name()
+    print manager.gen_room_name()
+    print manager.gen_room_name()
+    print manager.unregister(handler)
+    print manager.unregister(handler2)
